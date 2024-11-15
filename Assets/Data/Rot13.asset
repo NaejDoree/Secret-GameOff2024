@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 183a3cce72e53ca4f859db7d41712f01, type: 3}
+  m_Name: Rot13
+  m_EditorClassIdentifier: 
+  _replacements:
+  - OriginalLetter: 65
+    ReplacementLetter: 78
+  - OriginalLetter: 66
+    ReplacementLetter: 79
+  - OriginalLetter: 67
+    ReplacementLetter: 80
+  - OriginalLetter: 68
+    ReplacementLetter: 81
+  - OriginalLetter: 69
+    ReplacementLetter: 82
+  - OriginalLetter: 70
+    ReplacementLetter: 83
+  - OriginalLetter: 71
+    ReplacementLetter: 84
+  - OriginalLetter: 72
+    ReplacementLetter: 85
+  - OriginalLetter: 73
+    ReplacementLetter: 86
+  - OriginalLetter: 74
+    ReplacementLetter: 87
+  - OriginalLetter: 75
+    ReplacementLetter: 88
+  - OriginalLetter: 76
+    ReplacementLetter: 89
+  - OriginalLetter: 75
+    ReplacementLetter: 88
