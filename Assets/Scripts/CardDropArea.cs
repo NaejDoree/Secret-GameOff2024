@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 public class CardDropArea : MonoBehaviour, IDropHandler
 {
-    public event Action<Card> cardReceived;
+    public event Action<Card> CardReceived;
     
     public void OnDrop(PointerEventData eventData)
     {
@@ -12,7 +12,7 @@ public class CardDropArea : MonoBehaviour, IDropHandler
         Card card = eventData.pointerDrag.GetComponent<Card>();
         if (card != null)
         {
-            cardReceived?.Invoke(card);
+            CardReceived?.Invoke(card);
         }
     }
 }

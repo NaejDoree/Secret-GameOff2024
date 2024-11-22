@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,7 +10,12 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     [SerializeField] private CypheredText _cardText;
     private RectTransform m_DraggingPlane;
     public CypheredText Effect => _cardText;
-    
+
+    private void OnEnable()
+    {
+        _raycastTarget.raycastTarget = true;
+    }
+
     public void OnBeginDrag(PointerEventData eventData)
     {
         m_DraggingPlane = transform as RectTransform;

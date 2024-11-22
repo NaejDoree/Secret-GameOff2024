@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CodeRunner : MonoBehaviour
 {
+    private CardsManager _cardsManager;
+    
     private string[] _lines = new []{""};
     public int InstructionPointer;
 
@@ -23,15 +25,22 @@ public class CodeRunner : MonoBehaviour
         {"GOTO", new InstrGoto()},
         
         //Gameplay
-        //{"DRAW", new InstrDrawCard()},
-        //{"SHUFFLE", new InstrShuffle()},
-        //{"WIN", new InstrWin()},
-        //{"LOOSE", new InstrLoose()},
+        {"DRAW", new InstrDrawCard()},
+        {"UNLOCK", new InstrUnlock()},
+        {"SHUFFLE", new InstrShuffle()},
+        //{"ALERT", new InstrLoose()},
     };
 
+    public event Action UnlockCalled;
+
+    public void SetCardsManager(CardsManager manager) => _cardsManager = manager;
+    
     public void SetInstructions(string code)
     {
         InstructionPointer = 0;
+        Flags.Clear();
+        // sanitizing line endings
+        code = code.Replace("\r" ,"");
         _lines = code.Split("\n");
     }
 
@@ -67,7 +76,7 @@ public class CodeRunner : MonoBehaviour
             param2 = ParseParam(words[2]);
         }
 
-        if (words.Length > 1)
+        if (words.Length >= 1)
         {
             ExecuteInstruction(words[0], param1, param2);
         }
@@ -92,4 +101,8 @@ public class CodeRunner : MonoBehaviour
             _instructions[instructionName].Run(this, param1, param2);
         }
     }
+
+    public void Draw(int cardAmount = 1) => _cardsManager.Draw(cardAmount);
+    public void Unlock() => UnlockCalled?.Invoke();
+    public void Suffle() => _cardsManager.ShuffleAll();
 }
