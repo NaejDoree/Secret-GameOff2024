@@ -500,6 +500,12 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4861329855636269682, guid: 92a2d1b1eee6d9c4a976b4541c130471, type: 3}
+      propertyPath: m_text
+      value: 'TEST 3/3 COMPLETE
+
+        WELL DONE'
+      objectReference: {fileID: 0}
     - target: {fileID: 4945291106356907865, guid: 92a2d1b1eee6d9c4a976b4541c130471, type: 3}
       propertyPath: m_text
       value: ' BHG BS ERNPU / OUT OF REACH'

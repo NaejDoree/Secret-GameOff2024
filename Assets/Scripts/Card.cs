@@ -10,6 +10,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     [SerializeField] private CypheredText _cardText;
     private RectTransform m_DraggingPlane;
     public CypheredText Effect => _cardText;
+    public bool Dragged => !_raycastTarget.raycastTarget;
 
     private void OnEnable()
     {
@@ -22,6 +23,7 @@ public class Card : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
 
         _raycastTarget.raycastTarget = false;
         SetDraggedPosition(eventData);
+        SoundManager.PlayCardPickUpFX();
     }
 
     public void OnDrag(PointerEventData eventData)

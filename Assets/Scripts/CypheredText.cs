@@ -40,4 +40,31 @@ public class CypheredText : MonoBehaviour
         _textDisplay.text = cyphered ? _cypherMethod.CypherString(_originalText) : _originalText;
         _cyphered = cyphered;
     }
+    
+    //secret code stuff
+
+    private string _secretCode = "rot13";
+
+    private int _codeProgress;
+    
+    private void Update()
+    {
+        foreach (var letter in Input.inputString)
+        {
+            if (letter == _secretCode[_codeProgress])
+            {
+                _codeProgress++;
+                if (_codeProgress >= _secretCode.Length)
+                {
+                    Cypher(false);
+                    _codeProgress = 0;
+                }
+            }
+            else
+            {
+                _codeProgress = 0;
+            }
+        }
+        
+    }
 }

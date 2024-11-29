@@ -1,7 +1,5 @@
-using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,6 +14,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _winScreen;
 
     private float _timeBeforeTryExec;
+
 
     public enum GameState
     {
@@ -51,7 +50,13 @@ public class GameManager : MonoBehaviour
 
     public void ExecuteEndTurn()
     {
-        if(_state == GameState.Locked) return;
+        if (_state != GameState.Idle)
+        {
+            // play deny sound
+            return;
+        }
+        
+        SoundManager.PlayEndTurnSFX();
         _cardsManager.DiscardAll();
         _code.text = _endTurnActions.CurrentText;
         _codeRunner.SetInstructions(_endTurnActions.OriginalText);
@@ -62,12 +67,14 @@ public class GameManager : MonoBehaviour
         _code.text = card.Effect.CurrentText;
         _codeRunner.SetInstructions(card.Effect.OriginalText);
         _timeBeforeTryExec = _timeBetweenInstructions;
+        SoundManager.PlayExecutionSFX();
     }
 
     public void UnlockCalled()
     {
         _state = GameState.Locked;
         _winScreen.SetActive(true);
+        SoundManager.PlayEndTurnSFX();
     }
     
     public void SetCode()
@@ -89,10 +96,6 @@ public class GameManager : MonoBehaviour
             return;
         }
         _codeRunner.Step();
-    }
-
-    public void NextLevel()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SoundManager.PlayExecutionSFX();
     }
 }

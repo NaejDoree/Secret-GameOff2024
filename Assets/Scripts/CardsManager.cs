@@ -14,6 +14,8 @@ public class CardsManager : MonoBehaviour
     [SerializeField] private List<Card> _deck = new List<Card>();
     [SerializeField] private List<Card> _discard = new List<Card>();
 
+    [SerializeField] private RectTransform _cardsSpawnPoint;
+
     public event Action<Card> CardPlayed; 
 
 
@@ -104,7 +106,8 @@ public class CardsManager : MonoBehaviour
         // if there is take a card from deck and place it in a hand spots
         var toAdd = _deck[0];
         toAdd.gameObject.SetActive(true);
-        toAdd.GetComponent<RectTransform>().position = availableSpot.GetComponent<RectTransform>().position;
+        //toAdd.GetComponent<RectTransform>().position = availableSpot.GetComponent<RectTransform>().position;
+        toAdd.GetComponent<RectTransform>().position = _cardsSpawnPoint.position;
 
         availableSpot.CardInSpot = toAdd;
         _deck.Remove(toAdd);
