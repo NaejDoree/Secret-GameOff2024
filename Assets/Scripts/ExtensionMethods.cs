@@ -26,4 +26,28 @@ public static class ExtensionMethods
             dict.Add(key, value);
         }
     }
+    
+    public static void SetOrCreate(this Dictionary<string, string> dict, string key, string value = "")
+    {
+        if (dict.ContainsKey(key))
+        {
+            dict[key] = value;
+        }
+        else
+        {
+            dict.Add(key, value);
+        }
+    }
+    
+    public static string GetOrDefault(this Dictionary<string, string> dict, string key, string defaultValue = "")
+    {
+        if (dict.ContainsKey(key))
+        {
+            return dict[key];
+        }
+        else
+        {
+            return defaultValue;
+        }
+    }
 }
