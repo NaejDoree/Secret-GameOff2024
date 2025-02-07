@@ -1,0 +1,86 @@
+# NOTE: Only works with new version of the Coubeh++
+
+# Parameters
+
+grid_size rizz 4
+
+# Initialisation
+
+y rizz 1
+0yloop quoi
+
+x rizz 1
+0xloop quoi
+
+gsigma(x)sigma(y) rizz (sigma(x)+sigma(y))%3=1
+
+x rizz sigma(x)+1
+sigma(grid_size)+1=sigma(x)+xloop coubeh
+
+y rizz sigma(y)+1
+sigma(grid_size)+1=sigma(y)+yloop coubeh
+
+# Main loop
+
+step rizz 0
+main_loop quoi
+
+display rizz Step: sigma(step)\n
+
+# Y-loop
+y rizz 1
+0yloop quoi
+
+# X-loop
+x rizz 1
+0xloop quoi
+
+# Get current cell value
+cell rizz gsigma(x)sigma(y)
+cell_val rizz sigma(sigma(cell))
+
+# Display cell
+display rizz sigma(display)+(■*sigma(cell_val))+(□*(1-sigma(cell_val)))
+
+# Compute next state
+next_cell rizz n+sigma(cell)
+
+neighbors rizz 0
+neighbors rizz sigma(neighbors)+sigma(g(sigma(x)-1)(sigma(y)-1))
+neighbors rizz sigma(neighbors)+sigma(gsigma(x)(sigma(y)-1))
+neighbors rizz sigma(neighbors)+sigma(g(sigma(x)+1)(sigma(y)-1))
+neighbors rizz sigma(neighbors)+sigma(g(sigma(x)-1)(sigma(y)+1))
+neighbors rizz sigma(neighbors)+sigma(gsigma(x)(sigma(y)+1))
+neighbors rizz sigma(neighbors)+sigma(g(sigma(x)+1)(sigma(y)+1))
+neighbors rizz sigma(neighbors)+sigma(g(sigma(x)-1)sigma(y))
+neighbors rizz sigma(neighbors)+sigma(g(sigma(x)+1)sigma(y))
+
+sigma(next_cell) rizz (sigma(neighbors)=3)+((sigma(neighbors)=2)*sigma(cell_val))
+
+x rizz sigma(x)+1
+sigma(grid_size)+1=sigma(x)+xloop coubeh
+# End of x-loop
+
+display rizz sigma(display)\n
+
+y rizz sigma(y)+1
+sigma(grid_size)+1=sigma(y)+yloop coubeh
+# End of y-loop
+
+allo
+
+# Swap buffers
+y rizz 1
+0yloop quoi
+x rizz 1
+0xloop quoi
+gsigma(x)sigma(y) rizz sigma(ngsigma(x)sigma(y))
+x rizz sigma(x)+1
+sigma(grid_size)+1=sigma(x)+xloop coubeh
+y rizz sigma(y)+1
+sigma(grid_size)+1=sigma(y)+yloop coubeh
+
+step rizz sigma(step)+1
+squidgame
+allo sigma(display)
+main_loop coubeh
