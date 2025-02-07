@@ -7,7 +7,6 @@ public class Coubeh_InstrAllo : CoubehInstruction
     {
         var executedParameters = coubehRunnerInstance.ExecuteOperators(parameters);
         string text = string.Join(" ", executedParameters);
-        Debug.Log(text);
         coubehRunnerInstance.PrintToOutput(text);
     }
 }
