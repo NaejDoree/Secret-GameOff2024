@@ -23,6 +23,7 @@ public class CoubehRunner : MonoBehaviour
             {"allo", new Coubeh_InstrAllo()},
             {"arpagnan", new Coubeh_InstrArpagnan()},
             {"skibidi", new Coubeh_InstrSkibidi()},
+            {"squidgame", new Coubeh_InstrSquidgame()},
         };
         
         public void SetCode(string code)
@@ -80,32 +81,78 @@ public class CoubehRunner : MonoBehaviour
 
         public string ExecuteOperators(string word)
         {
-            // first apply all sigmas
-            var sigmas = word.Split("sigma(");
-            var sigmaResult = new List<string>();
-            foreach (var toSimgaTest in sigmas)
-            {
-                string sigmaOutput = "";
-                var endOfSigma = toSimgaTest.IndexOf(")");
-                if (endOfSigma >= 0)
-                {
-                    string sigmaExec = Memory.GetOrDefault(toSimgaTest.Substring(0, endOfSigma));
-                    sigmaOutput = sigmaExec + toSimgaTest.Substring(endOfSigma + 1, toSimgaTest.Length -1 -endOfSigma);
+            // First evaluate everything that is between parenthesis
+            int nestingLevel = 0;
+            List<int> nestStarts = new();
+            List<int> nestSizes = new();
+            List<string> evaluatedNests = new();
+
+            for (int i = 0; i < word.Length; i++) {
+                switch (word[i]) {
+                    case '(':
+                        nestingLevel++;
+                        if (nestingLevel == 1)
+                        {
+                            nestStarts.Add(i);
+                        }
+                        break;
+                    case ')':
+                        nestingLevel--;
+                        if (nestingLevel == 0)
+                        {
+                            nestSizes.Add(i - nestStarts.Last() - 1);
+                            string nestContent = word.Substring(nestStarts.Last() + 1, nestSizes.Last());
+                            evaluatedNests.Add(ExecuteOperators(nestContent));
+                        }
+                        else if (nestingLevel < 0)
+                        {
+                            return word.Substring(0, i);
+                        }
+                        break;
+                    default:
+                        break;
                 }
-                else
-                {
-                    sigmaOutput = toSimgaTest;
-                }
-                sigmaResult.Add(sigmaOutput);
             }
 
-            word = string.Join("", sigmaResult);
+            // Replace the evaluated nests, starting from the last one
+            string sigmaExpr = "sigma";
+            string toiletExpr = "toilet";
+            for (int i = nestStarts.Count - 1; i >= 0; i--) {
+                int start = nestStarts[i];
+                int size = nestSizes[i];
+                string evaluatedNest = evaluatedNests[i];
+                
+                // Is it a toilet?
+                int toiletStart = start - toiletExpr.Length;
+                if (toiletStart >= 0 && word.Substring(toiletStart, toiletExpr.Length) == toiletExpr)
+                {
+                    // Toilets are NOT evaluated in this context
+                    continue;
+                }
+
+                // Is it a sigma?
+                int sigmaStart = start - sigmaExpr.Length;
+                if (sigmaStart >= 0 && word.Substring(sigmaStart, sigmaExpr.Length) == sigmaExpr)
+                {
+                    // Evaluate the sigma
+                    string sigmaExec = Memory.GetOrDefault(evaluatedNest);
+
+                    // Replace the sigma
+                    word = word.Substring(0, sigmaStart) + sigmaExec + word.Substring(start + size + 2);
+                }
+                else {
+                    // Replace the nest
+                    word = word.Substring(0, start) + evaluatedNest + word.Substring(start + size + 2);
+                }
+            }
+
             string prevWord = "";
             while (word != prevWord)
             {
                 prevWord = word;
                 word = ExecuteMathOperator(word);
             }
+
             return word;
         }
         
@@ -120,6 +167,7 @@ public class CoubehRunner : MonoBehaviour
                     word[i] == '/' ||
                     word[i] == '+' ||
                     word[i] == '-' ||
+                    word[i] == '%' ||
                     word[i] == '=')
                 {
                     operatorPositions.Add(i);
@@ -129,6 +177,26 @@ public class CoubehRunner : MonoBehaviour
             if (operatorPositions.Count == 0)
             {
                 return word;
+            }
+
+            // search for %
+            for (int i = 0; i < operatorPositions.Count; i++)
+            {
+                var currentOperatorPos = operatorPositions[i];
+                var currentOperator = word[currentOperatorPos];
+                var previousOperatorPos = i - 1 >= 0 ? operatorPositions[i - 1] : 0;
+                var nextOperatorPos = i + 1 < operatorPositions.Count ? operatorPositions[i + 1] : word.Length;
+                
+                var part1 = word.Substring(previousOperatorPos, currentOperatorPos - previousOperatorPos);
+                var part2 = word.Substring(currentOperatorPos + 1, nextOperatorPos - (currentOperatorPos + 1));
+                
+                var before = word.Substring(0, previousOperatorPos == 0 ? 0 : previousOperatorPos+1);
+                var after = word.Substring(nextOperatorPos, word.Length - nextOperatorPos);
+                if (currentOperator == '%')
+                {
+                    var result = ApplyModulo(part1,part2);
+                    return before + result + after;
+                }
             }
             
             //search for * or / and apply the first one
@@ -190,6 +258,21 @@ public class CoubehRunner : MonoBehaviour
             return word;
         }
 
+        private string ApplyModulo(string string1, string string2)
+        {
+            int? value1 = TryIntParse(string1);
+            int? value2 = TryIntParse(string2);
+
+            if (value1.HasValue && value2.HasValue)
+            {
+                return "" + (value1.Value % value2.Value);
+            }
+            else
+            {
+                return string1 + string2;
+            }
+        }
+
         private string ApplyMult(string string1, string string2)
         {
             int? value1 = TryIntParse(string1);
@@ -198,6 +281,17 @@ public class CoubehRunner : MonoBehaviour
             if (value1.HasValue && value2.HasValue)
             {
                 return "" + (value1.Value * value2.Value);
+            }
+            else if (value1.HasValue || value2.HasValue) {
+                int repeats = value1.HasValue ? value1.Value : value2.Value;
+                string baseStr = value1.HasValue ? string2 : string1;
+
+                string result = "";
+                for (int i = 0; i < repeats; i++)
+                {
+                    result += baseStr;
+                }
+                return result;
             }
             else
             {
@@ -295,6 +389,12 @@ public class CoubehRunner : MonoBehaviour
         public void PrintToOutput(string text)
         {
             Output?.Invoke(text);
+        }
+
+        public event Action Clear;
+        public void ClearOutput()
+        {
+            Clear?.Invoke();
         }
     }
 
