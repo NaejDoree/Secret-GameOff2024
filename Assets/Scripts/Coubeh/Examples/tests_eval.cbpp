@@ -1,0 +1,47 @@
+res rizz 38
+test rizz (1+2)*7+2+3*5
+allo sigma(res)=sigma(test)
+
+res rizz 8
+test rizz 10/2+7%4
+allo sigma(res)=sigma(test)
+
+res rizz (((23
+test rizz (((2+3
+allo sigma(res)=sigma(test)
+
+res rizz hellohellohello236aaaa
+test rizz 3*hello+2+3+2*3+a*4
+allo sigma(res)=sigma(test)
+
+res rizz 12)2)2)2)2)2)(5(5
+test rizz 1+2)*(2*3)+(5*2
+allo sigma(res)=sigma(test)
+
+res rizz hellohello
+a rizz 2
+b rizz hello
+test rizz sigma(a)*sigma(b)
+allo sigma(res)=sigma(test)
+
+res rizz 2
+b rizz a
+test rizz sigma(sigma(b))
+allo sigma(res)=sigma(test)
+
+res rizz sigma(a
+test rizz sigma(sigma(b)
+allo sigma(res)=sigma(test)
+
+res rizz sigmaa)
+test rizz sigmasigma(b))
+allo sigma(res)=sigma(test)
+
+res rizz toilet2
+test rizz toilet(sigma(a))
+allo sigma(res)=sigma(test)
+
+res rizz 3
+toileta rizz 3
+test rizz sigma(toilet(sigma(b)))
+allo sigma(res)=sigma(test)
