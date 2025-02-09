@@ -1,0 +1,291 @@
+# NOTE: Works with first version of the Coubeh++
+
+grid_size rizz 4
+
+step rizz 1
+
+main_loop quoi
+
+# Display step
+allo
+allo Step sigma(step)
+
+# Next state read instructions
+skibidi cs rizz sigma(cs)+1
+skibidi sigma(cs)=sigma(step)+s arpagnan
+skibidi ci rizz 0
+
+# y_loop
+y rizz 1
+0_y_loop quoi
+
+# Preparing the display of current row
+row_display rizz |
+
+# x_loop
+x rizz 1
+0_x_loop quoi
+
+# Next state cell's read instructions
+skibidi ci rizz sigma(ci)+1
+skibidi sigma(ci)=sigma(i)+i arpagnan
+
+# Getting the value of the current cell
+i rizz sigma(y)*sigma(grid_size)+sigma(x)-sigma(grid_size)
+ret rizz r1
+call rizz read_grid
+sigma(ret) quoi
+sigma(call) arpagnan
+
+# Adding the current cell state to the row display
+cell_full_+sigma(val) arpagnan
+row_display rizz sigma(row_display)#
+end_if arpagnan
+cell_full_0 quoi
+row_display rizz sigma(row_display)_
+end_if quoi
+
+# Getting the value of cells around the current cell
+y_top rizz sigma(y)-1
+y_top_+sigma(y_top) arpagnan
+y_top_valid arpagnan
+y_top_0 quoi
+y_top rizz sigma(grid_size)
+y_top_valid quoi
+
+y_bottom_+sigma(y) arpagnan
+y_bottom rizz sigma(y)+1
+y_bottom_valid arpagnan
+y_bottom_+sigma(grid_size) quoi
+y_bottom rizz 1
+y_bottom_valid quoi
+
+x_left rizz sigma(x)-1
+x_left_+sigma(x_left) arpagnan
+x_left_valid arpagnan
+x_left_0 quoi
+x_left rizz sigma(grid_size)
+x_left_valid quoi
+
+x_right_+sigma(x) arpagnan
+x_right rizz sigma(x)+1
+x_right_valid arpagnan
+x_right_+sigma(grid_size) quoi
+x_right rizz 1
+x_right_valid quoi
+
+n_cells rizz 0
+curr_cell_full rizz sigma(val)
+
+# Top
+i rizz sigma(y_top)*sigma(grid_size)+sigma(x)-sigma(grid_size)
+ret rizz r2
+call rizz read_grid
+sigma(ret) quoi
+sigma(call) arpagnan
+n_cells rizz sigma(n_cells)+sigma(val)
+
+# Top-left
+i rizz sigma(y_top)*sigma(grid_size)+sigma(x_left)-sigma(grid_size)
+ret rizz r3
+call rizz read_grid
+sigma(ret) quoi
+sigma(call) arpagnan
+n_cells rizz sigma(n_cells)+sigma(val)
+
+# Top-right
+i rizz sigma(y_top)*sigma(grid_size)+sigma(x_right)-sigma(grid_size)
+ret rizz r4
+call rizz read_grid
+sigma(ret) quoi
+sigma(call) arpagnan
+n_cells rizz sigma(n_cells)+sigma(val)
+
+# Right
+i rizz sigma(y)*sigma(grid_size)+sigma(x_right)-sigma(grid_size)
+ret rizz r5
+call rizz read_grid
+sigma(ret) quoi
+sigma(call) arpagnan
+n_cells rizz sigma(n_cells)+sigma(val)
+
+# Left
+i rizz sigma(y)*sigma(grid_size)+sigma(x_left)-sigma(grid_size)
+ret rizz r6
+call rizz read_grid
+sigma(ret) quoi
+sigma(call) arpagnan
+n_cells rizz sigma(n_cells)+sigma(val)
+
+# Bottom-left
+i rizz sigma(y_bottom)*sigma(grid_size)+sigma(x_left)-sigma(grid_size)
+ret rizz r7
+call rizz read_grid
+sigma(ret) quoi
+sigma(call) arpagnan
+n_cells rizz sigma(n_cells)+sigma(val)
+
+# Bottom
+i rizz sigma(y_bottom)*sigma(grid_size)+sigma(x)-sigma(grid_size)
+ret rizz r8
+call rizz read_grid
+sigma(ret) quoi
+sigma(call) arpagnan
+n_cells rizz sigma(n_cells)+sigma(val)
+
+# Bottom-right
+i rizz sigma(y_bottom)*sigma(grid_size)+sigma(x_right)-sigma(grid_size)
+ret rizz r9
+call rizz read_grid
+sigma(ret) quoi
+sigma(call) arpagnan
+n_cells rizz sigma(n_cells)+sigma(val)
+
+# Updating the value of the current cell
+new_val rizz sigma(n_cells)=2
+new_val rizz sigma(new_val)*sigma(curr_cell_full)
+new_val rizz sigma(n_cells)=3+sigma(new_val)
+
+# Writing the new state of the current cell
+new_cell_full_+sigma(new_val) arpagnan
+skibidi val rizz 1
+end_if arpagnan
+new_cell_full_0 quoi
+skibidi val rizz 0
+end_if quoi
+
+# Finishing the read instructions for current cell
+skibidi sigma(ret) coubeh
+skibidi 0i quoi
+
+# End of x_loop
+x rizz sigma(x)+1
+sigma(grid_size)+1=sigma(x)+_x_loop coubeh
+
+# Displaying the row
+allo sigma(row_display)+|
+
+# End of y_loop
+y rizz sigma(y)+1
+sigma(grid_size)+1=sigma(y)+_y_loop coubeh
+
+# Finishing the read instructions for the next state
+skibidi 0s quoi
+
+# Next step
+step rizz sigma(step)+1
+
+# Repeat!
+main_loop coubeh
+
+
+# -----------
+# State of the grid - gets updated with skibs
+# -----------
+
+read_grid quoi
+call rizz none
+
+cs rizz 0
+
+cs rizz sigma(cs)+1
+sigma(cs)=sigma(step)+s arpagnan
+ci rizz 0
+
+ci rizz sigma(ci)+1
+sigma(ci)=sigma(i)+i arpagnan
+val rizz 0
+sigma(ret) coubeh
+0i quoi
+
+ci rizz sigma(ci)+1
+sigma(ci)=sigma(i)+i arpagnan
+val rizz 0
+sigma(ret) coubeh
+0i quoi
+
+ci rizz sigma(ci)+1
+sigma(ci)=sigma(i)+i arpagnan
+val rizz 0
+sigma(ret) coubeh
+0i quoi
+
+ci rizz sigma(ci)+1
+sigma(ci)=sigma(i)+i arpagnan
+val rizz 0
+sigma(ret) coubeh
+0i quoi
+
+ci rizz sigma(ci)+1
+sigma(ci)=sigma(i)+i arpagnan
+val rizz 1
+sigma(ret) coubeh
+0i quoi
+
+ci rizz sigma(ci)+1
+sigma(ci)=sigma(i)+i arpagnan
+val rizz 1
+sigma(ret) coubeh
+0i quoi
+
+ci rizz sigma(ci)+1
+sigma(ci)=sigma(i)+i arpagnan
+val rizz 1
+sigma(ret) coubeh
+0i quoi
+
+ci rizz sigma(ci)+1
+sigma(ci)=sigma(i)+i arpagnan
+val rizz 0
+sigma(ret) coubeh
+0i quoi
+
+ci rizz sigma(ci)+1
+sigma(ci)=sigma(i)+i arpagnan
+val rizz 1
+sigma(ret) coubeh
+0i quoi
+
+ci rizz sigma(ci)+1
+sigma(ci)=sigma(i)+i arpagnan
+val rizz 0
+sigma(ret) coubeh
+0i quoi
+
+ci rizz sigma(ci)+1
+sigma(ci)=sigma(i)+i arpagnan
+val rizz 0
+sigma(ret) coubeh
+0i quoi
+
+ci rizz sigma(ci)+1
+sigma(ci)=sigma(i)+i arpagnan
+val rizz 1
+sigma(ret) coubeh
+0i quoi
+
+ci rizz sigma(ci)+1
+sigma(ci)=sigma(i)+i arpagnan
+val rizz 1
+sigma(ret) coubeh
+0i quoi
+
+ci rizz sigma(ci)+1
+sigma(ci)=sigma(i)+i arpagnan
+val rizz 0
+sigma(ret) coubeh
+0i quoi
+
+ci rizz sigma(ci)+1
+sigma(ci)=sigma(i)+i arpagnan
+val rizz 0
+sigma(ret) coubeh
+0i quoi
+
+ci rizz sigma(ci)+1
+sigma(ci)=sigma(i)+i arpagnan
+val rizz 1
+sigma(ret) coubeh
+0i quoi
+
+0s quoi

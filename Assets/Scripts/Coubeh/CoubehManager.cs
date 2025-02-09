@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class CoubehManager : MonoBehaviour
 {
-    [SerializeField] private float _timeBetweenInstructions = 1;
+    [SerializeField] private float _timeBetweenInstructions = 0.001f;
     [SerializeField] private CoubehRunner _codeRunner;
     [SerializeField] private TMP_InputField _code;
     [SerializeField] private TMP_Text _output;
 
-    private float _timeBeforeTryExec;
+    private float _timeBudget = 0.0f;
 
     public enum GameState
     {
@@ -34,16 +34,23 @@ public class CoubehManager : MonoBehaviour
     private void Awake()
     {
         _codeRunner.MainInstance.Output += (text) => _output.text += text + "\n";
+        _codeRunner.MainInstance.Clear += () => _output.text = "";
     }
 
     public void Update()
     {
         if(_state == GameState.Editing) return;
-        _timeBeforeTryExec -= Time.deltaTime;
-        if (_timeBeforeTryExec <= 0)
-        {
+        _timeBudget += Time.deltaTime;
+
+        bool stepped = false;
+        while (_timeBudget >= _timeBetweenInstructions) {
             Step();
-            _timeBeforeTryExec = _timeBetweenInstructions;
+            _timeBudget -= _timeBetweenInstructions;
+            stepped = true;
+        }
+
+        if (stepped) {
+            SoundManager.PlayExecutionSFX();
         }
     }
 
@@ -77,6 +84,5 @@ public class CoubehManager : MonoBehaviour
         }
         _codeRunner.Step();
         _code.text = string.Join("\n", _codeRunner.MainInstance._lines);
-        SoundManager.PlayExecutionSFX();
     }
 }
