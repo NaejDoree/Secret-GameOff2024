@@ -5,7 +5,7 @@ public class Coubeh_InstrAllo : CoubehInstruction
 {
     public override void Run(CoubehRunner.CoubehRunnerInstance coubehRunnerInstance, List<string> parameters)
     {
-        var executedParameters = coubehRunnerInstance.ExecuteOperators(parameters);
+        var executedParameters = coubehRunnerInstance.ExecuteOperators(parameters, false);
         string text = string.Join(" ", executedParameters);
         coubehRunnerInstance.PrintToOutput(text);
     }

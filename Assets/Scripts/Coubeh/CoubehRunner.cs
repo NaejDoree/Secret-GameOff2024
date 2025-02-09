@@ -24,6 +24,7 @@ public class CoubehRunner : MonoBehaviour
             {"arpagnan", new Coubeh_InstrArpagnan()},
             {"skibidi", new Coubeh_InstrSkibidi()},
             {"squidgame", new Coubeh_InstrSquidgame()},
+            {"ah", new Coubeh_InstrAh()},
         };
         
         public void SetCode(string code)
@@ -58,8 +59,6 @@ public class CoubehRunner : MonoBehaviour
 
             int instructionIndex = FindInstructionPosition(words);
 
-            
-
             if (instructionIndex >= 0)
             {
                 CoubehInstruction instruction = _instructions[words[instructionIndex]];
@@ -68,45 +67,65 @@ public class CoubehRunner : MonoBehaviour
             }
         }
 
-        public List<string> ExecuteOperators(List<string> words)
+        public List<string> ExecuteOperators(List<string> words, bool skibidiContext)
         {
             var executedWords = new List<string>();
             foreach (var word in words)
             {
-                executedWords.Add(ExecuteOperators(word));
+                executedWords.Add(ExecuteOperators(word, skibidiContext));
             }
 
             return executedWords;
         }
 
-        public string ExecuteOperators(string word)
+        public string ExecuteOperators(string word, bool skibidiContext)
         {
-            // First evaluate everything that is between parenthesis
-            int nestingLevel = 0;
-            List<int> nestStarts = new();
-            List<int> nestSizes = new();
-            List<string> evaluatedNests = new();
+            string sigmaExpr = "sigma";
+            string toiletExpr = "toilet";
 
+            List<int> nestStarts = new();
             for (int i = 0; i < word.Length; i++) {
                 switch (word[i]) {
                     case '(':
-                        nestingLevel++;
-                        if (nestingLevel == 1)
-                        {
-                            nestStarts.Add(i);
-                        }
+                        nestStarts.Add(i);
                         break;
                     case ')':
-                        nestingLevel--;
-                        if (nestingLevel == 0)
-                        {
-                            nestSizes.Add(i - nestStarts.Last() - 1);
-                            string nestContent = word.Substring(nestStarts.Last() + 1, nestSizes.Last());
-                            evaluatedNests.Add(ExecuteOperators(nestContent));
-                        }
-                        else if (nestingLevel < 0)
-                        {
-                            return word.Substring(0, i);
+                        if (nestStarts.Count > 0) {
+                            int start = nestStarts.Last();
+                            nestStarts.RemoveAt(nestStarts.Count - 1);
+                            int size = i - start - 1;
+                            string nestContent = word.Substring(start + 1, size);
+                            string evaluatedNest = ExecuteOperators(nestContent, false);
+
+                            int sigmaStart = start - sigmaExpr.Length;
+                            int toiletStart = start - toiletExpr.Length;
+
+                            if (!skibidiContext && sigmaStart >= 0 && word.Substring(sigmaStart, sigmaExpr.Length) == sigmaExpr)
+                            {
+                                // It's a sigma()
+
+                                // Evaluate the sigma
+                                string sigmaExec = Memory.GetOrDefault(evaluatedNest);
+
+                                // Replace the sigma
+                                word = word.Substring(0, sigmaStart) + sigmaExec + word.Substring(i + 1);
+                                i = sigmaStart + sigmaExec.Length - 1;
+                            }
+                            else if (skibidiContext && toiletStart >= 0 && word.Substring(toiletStart, toiletExpr.Length) == toiletExpr)
+                            {
+                                // It's a toilet()
+
+                                // Replace the toilet
+                                word = word.Substring(0, toiletStart) + evaluatedNest + word.Substring(i + 1);
+                                i = toiletStart + evaluatedNest.Length - 1;
+                            }
+                            else if (!skibidiContext)
+                            {
+                                // It's anything else, or a sigma/toilet that is not executed in this context - we replace the parentheses with the evaluated nest
+                                word = word.Substring(0, start) + evaluatedNest + word.Substring(i + 1);
+                                i = start + evaluatedNest.Length - 1;
+                            }
+                            // In skibidi context, nothing except toilet() is evaluated
                         }
                         break;
                     default:
@@ -114,40 +133,8 @@ public class CoubehRunner : MonoBehaviour
                 }
             }
 
-            // Replace the evaluated nests, starting from the last one
-            string sigmaExpr = "sigma";
-            string toiletExpr = "toilet";
-            for (int i = nestStarts.Count - 1; i >= 0; i--) {
-                int start = nestStarts[i];
-                int size = nestSizes[i];
-                string evaluatedNest = evaluatedNests[i];
-                
-                // Is it a toilet?
-                int toiletStart = start - toiletExpr.Length;
-                if (toiletStart >= 0 && word.Substring(toiletStart, toiletExpr.Length) == toiletExpr)
-                {
-                    // Toilets are NOT evaluated in this context
-                    continue;
-                }
-
-                // Is it a sigma?
-                int sigmaStart = start - sigmaExpr.Length;
-                if (sigmaStart >= 0 && word.Substring(sigmaStart, sigmaExpr.Length) == sigmaExpr)
-                {
-                    // Evaluate the sigma
-                    string sigmaExec = Memory.GetOrDefault(evaluatedNest);
-
-                    // Replace the sigma
-                    word = word.Substring(0, sigmaStart) + sigmaExec + word.Substring(start + size + 2);
-                }
-                else {
-                    // Replace the nest
-                    word = word.Substring(0, start) + evaluatedNest + word.Substring(start + size + 2);
-                }
-            }
-
             string prevWord = "";
-            while (word != prevWord)
+            while (word != prevWord && !skibidiContext)
             {
                 prevWord = word;
                 word = ExecuteMathOperator(word);
@@ -355,7 +342,7 @@ public class CoubehRunner : MonoBehaviour
             }
             else
             {
-                return string1 + string2;
+                return "" + (string1 == string2 ? 1 : 0);
             }
         }
         private int? TryIntParse(string string1)
