@@ -25,6 +25,7 @@ public class CoubehRunner : MonoBehaviour
             {"skibidi", new Coubeh_InstrSkibidi()},
             {"squidgame", new Coubeh_InstrSquidgame()},
             {"ah", new Coubeh_InstrAh()},
+            {"ah!", new Coubeh_InstrAh()},
         };
         
         public void SetCode(string code)
